@@ -1,0 +1,36 @@
+{
+  "name": "hotel-flamingo",
+  "version": "1.0.0",
+  "description": "Sistema profesional de reservas de hotel con panel de administración",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hotel",
+    "reservas",
+    "booking",
+    "express",
+    "mysql"
+  ],
+  "author": "Adrian Acosta",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "mysql2": "^3.6.5",
+    "express-session": "^1.17.3",
+    "bcryptjs": "^2.4.3",
+    "express-validator": "^7.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

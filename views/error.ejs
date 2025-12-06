@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error <%= code %> - Hotel Flamingo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="error-page">
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-icon">❌</div>
+            <h1 class="error-code"><%= code %></h1>
+            <h2 class="error-message"><%= error %></h2>
+            <p class="error-description">
+                <% if (code === 404) { %>
+                    La página que buscas no existe o ha sido movida.
+                <% } else if (code === 403) { %>
+                    No tienes permisos para acceder a este contenido.
+                <% } else { %>
+                    Ha ocurrido un error inesperado. Por favor intenta nuevamente.
+                <% } %>
+            </p>
+            <div class="error-actions">
+                <a href="/" class="btn btn-primary">Volver al Inicio</a>
+                <% if (user) { %>
+                    <a href="/dashboard" class="btn btn-outline">Ir al Dashboard</a>
+                <% } else { %>
+                    <a href="/auth/login" class="btn btn-outline">Iniciar Sesión</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

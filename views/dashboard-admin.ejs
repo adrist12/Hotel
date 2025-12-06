@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - Hotel Flamingo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar sidebar-admin">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🏨</div>
+                <h3>Admin Panel</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/admin" class="sidebar-link active">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="/admin#habitaciones" class="sidebar-link">
+                    <span>🛏️</span> Habitaciones
+                </a>
+                <a href="/admin#reservas" class="sidebar-link">
+                    <span>📅</span> Reservas
+                </a>
+                <a href="/logout" class="sidebar-link">
+                    <span>🚪</span> Cerrar Sesión
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👨‍💼</div>
+                    <div class="user-details">
+                        <p class="user-name"><%= user.nombre_completo %></p>
+                        <p class="user-role">Administrador</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Panel de Administración</h1>
+                <p class="text-muted">Gestiona habitaciones y reservas del hotel</p>
+            </div>
+
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="alert alert-success">
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid stats-grid-4">
+                <div class="stat-card">
+                    <div class="stat-icon">🛏️</div>
+                    <div class="stat-content">
+                        <h3><%= estadisticas.totalHabitaciones %></h3>
+                        <p>Total Habitaciones</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <h3><%= estadisticas.habitacionesDisponibles %></h3>
+                        <p>Disponibles</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-content">
+                        <h3><%= estadisticas.reservasActivas %></h3>
+                        <p>Reservas Activas</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-highlight">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <h3>$<%= estadisticas.ingresosMensuales.toLocaleString() %></h3>
+                        <p>Ingresos del Mes</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Habitaciones -->
+            <section id="habitaciones" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Gestión de Habitaciones</h2>
+                    <button onclick="openHabitacionModal()" class="btn btn-primary">
+                        ➕ Nueva Habitación
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Tipo</th>
+                                <th>Capacidad</th>
+                                <th>Precio/Noche</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% habitaciones.forEach(habitacion => { %>
+                                <tr>
+                                    <td><strong>#<%= habitacion.numero %></strong></td>
+                                    <td><%= habitacion.tipo %></td>
+                                    <td>👥 <%= habitacion.capacidad %></td>
+                                    <td><strong>$<%= habitacion.precio_noche.toLocaleString() %></strong></td>
+                                    <td>
+                                        <span class="badge badge-<%= habitacion.estado %>">
+                                            <%= habitacion.estado.charAt(0).toUpperCase() + habitacion.estado.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button data-habitacion='<%= JSON.stringify(habitacion) %>' onclick="editarHabitacion(JSON.parse(this.getAttribute('data-habitacion')))" class="btn btn-sm btn-outline">
+                                            ✏️ Editar
+                                        </button>
+                                        <form action="/admin/habitaciones/<%= habitacion.id %>/eliminar" method="POST" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
+                                                🗑️ Eliminar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Gestión de Reservas -->
+            <section id="reservas" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Gestión de Reservas</h2>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Habitación</th>
+                                <th>Fecha Entrada</th>
+                                <th>Fecha Salida</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% reservas.forEach(reserva => { %>
+                                <tr>
+                                    <td><strong>#<%= reserva.id %></strong></td>
+                                    <td>
+                                        <%= reserva.nombre_cliente %><br>
+                                        <small class="text-muted"><%= reserva.email %></small>
+                                    </td>
+                                    <td>#<%= reserva.numero_habitacion %> - <%= reserva.tipo_habitacion %></td>
+                                    <td><%= new Date(reserva.fecha_entrada).toLocaleDateString('es-ES') %></td>
+                                    <td><%= new Date(reserva.fecha_salida).toLocaleDateString('es-ES') %></td>
+                                    <td><strong>$<%= reserva.costo_total.toLocaleString() %></strong></td>
+                                    <td>
+                                        <span class="badge badge-<%= reserva.estado %>">
+                                            <%= reserva.estado.charAt(0).toUpperCase() + reserva.estado.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/reservas/<%= reserva.id %>" method="POST" style="display: inline-block;">
+                                            <select name="estado" onchange="this.form.submit()" class="select-sm">
+                                                <option value="pendiente" <%= reserva.estado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+                                                <option value="confirmada" <%= reserva.estado === 'confirmada' ? 'selected' : '' %>>Confirmada</option>
+                                                <option value="completada" <%= reserva.estado === 'completada' ? 'selected' : '' %>>Completada</option>
+                                                <option value="cancelada" <%= reserva.estado === 'cancelada' ? 'selected' : '' %>>Cancelada</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal de Habitación -->
+    <div id="habitacionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal_title">Nueva Habitación</h2>
+                <button onclick="closeHabitacionModal()" class="modal-close">&times;</button>
+            </div>
+            <form id="habitacionForm" method="POST">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="numero">Número *</label>
+                            <input type="text" name="numero" id="numero" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo *</label>
+                            <select name="tipo" id="tipo" required>
+                                <option value="Individual">Individual</option>
+                                <option value="Doble">Doble</option>
+                                <option value="Suite">Suite</option>
+                                <option value="Familiar">Familiar</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="precio_noche">Precio/Noche *</label>
+                            <input type="number" name="precio_noche" id="precio_noche" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="capacidad">Capacidad *</label>
+                            <input type="number" name="capacidad" id="capacidad" required min="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea name="descripcion" id="descripcion" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imagen_url">URL de Imagen</label>
+                        <input type="url" name="imagen_url" id="imagen_url">
+                    </div>
+                    
+                    <div class="form-group" id="estado_group" style="display: none;">
+                        <label for="estado">Estado</label>
+                        <select name="estado" id="estado">
+                            <option value="disponible">Disponible</option>
+                            <option value="ocupada">Ocupada</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" onclick="closeHabitacionModal()" class="btn btn-outline">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openHabitacionModal() {
+            document.getElementById('modal_title').textContent = 'Nueva Habitación';
+            document.getElementById('habitacionForm').action = '/admin/habitaciones';
+            document.getElementById('habitacionForm').reset();
+            document.getElementById('estado_group').style.display = 'none';
+            document.getElementById('habitacionModal').style.display = 'flex';
+        }
+
+        function editarHabitacion(habitacion) {
+            document.getElementById('modal_title').textContent = 'Editar Habitación';
+            document.getElementById('habitacionForm').action = '/admin/habitaciones/' + habitacion.id;
+            document.getElementById('numero').value = habitacion.numero;
+            document.getElementById('tipo').value = habitacion.tipo;
+            document.getElementById('precio_noche').value = habitacion.precio_noche;
+            document.getElementById('capacidad').value = habitacion.capacidad;
+            document.getElementById('descripcion').value = habitacion.descripcion || '';
+            document.getElementById('imagen_url').value = habitacion.imagen_url || '';
+            document.getElementById('estado').value = habitacion.estado;
+            document.getElementById('estado_group').style.display = 'block';
+            document.getElementById('habitacionModal').style.display = 'flex';
+        }
+
+        function closeHabitacionModal() {
+            document.getElementById('habitacionModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('habitacionModal');
+            if (event.target === modal) {
+                closeHabitacionModal();
+            }
+        }
+    </script>
+</body>
+</html>
