@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitaciones - Hotel Flamingo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🏨</div>
+                <h3>Hotel Flamingo</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="sidebar-link">
+                    <span>🏠</span> Dashboard
+                </a>
+                <a href="/habitaciones" class="sidebar-link active">
+                    <span>🛏️</span> Habitaciones
+                </a>
+                <a href="/dashboard#mis-reservas" class="sidebar-link">
+                    <span>📅</span> Mis Reservas
+                </a>
+                <a href="/logout" class="sidebar-link">
+                    <span>🚪</span> Cerrar Sesión
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <p class="user-name"><%= user.nombre_completo %></p>
+                        <p class="user-role">Cliente</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Nuestras Habitaciones</h1>
+                <p class="text-muted">Encuentra la habitación perfecta para ti</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label for="filter-tipo">Tipo:</label>
+                    <select id="filter-tipo" onchange="filterRooms()">
+                        <option value="">Todos</option>
+                        <option value="Individual">Individual</option>
+                        <option value="Doble">Doble</option>
+                        <option value="Suite">Suite</option>
+                        <option value="Familiar">Familiar</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-precio">Precio máximo:</label>
+                    <input type="range" id="filter-precio" min="0" max="500" step="10" value="500" oninput="filterRooms()">
+                    <span id="precio-display">$500</span>
+                </div>
+            </div>
+
+            <!-- Habitaciones Grid -->
+            <div class="rooms-grid" id="rooms-container">
+                <% habitaciones.forEach(habitacion => { %>
+                    <div class="room-card" 
+                         data-tipo="<%= habitacion.tipo %>" 
+                         data-precio="<%= habitacion.precio_noche %>">
+                        <div class="room-image">
+                            <% if (habitacion.imagen_url) { %>
+                                <img src="<%= habitacion.imagen_url %>" alt="<%= habitacion.tipo %>">
+                            <% } else { %>
+                                <div class="room-placeholder">🏨</div>
+                            <% } %>
+                            <span class="room-type-badge"><%= habitacion.tipo %></span>
+                        </div>
+                        <div class="room-content">
+                            <h3>Habitación #<%= habitacion.numero %></h3>
+                            <div class="room-info">
+                                <span>👥 Capacidad: <%= habitacion.capacidad %> <%= habitacion.capacidad === 1 ? 'persona' : 'personas' %></span>
+                            </div>
+                            <% if (habitacion.descripcion) { %>
+                                <p class="room-description"><%= habitacion.descripcion %></p>
+                            <% } else { %>
+                                <p class="room-description">Habitación cómoda y acogedora con todas las comodidades.</p>
+                            <% } %>
+                            <div class="room-features">
+                                <span>🌡️ Aire acondicionado</span>
+                                <span>📺 TV</span>
+                                <span>🚿 Baño privado</span>
+                                <span>📶 WiFi</span>
+                            </div>
+                            <div class="room-footer">
+                                <div class="room-price">
+                                    <span class="price-amount">$<%= habitacion.precio_noche.toLocaleString() %></span>
+                                    <span class="price-period">/noche</span>
+                                </div>
+                                <button onclick="openReservaModal(<%= habitacion.id %>, <%- JSON.stringify(habitacion.tipo) %>, <%= habitacion.precio_noche %>)" class="btn btn-primary btn-sm">
+                                    Reservar Ahora
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <% if (habitaciones.length === 0) { %>
+                <div class="empty-state">
+                    <div class="empty-icon">🛏️</div>
+                    <h3>No hay habitaciones disponibles</h3>
+                    <p>Por favor vuelve más tarde</p>
+                </div>
+            <% } %>
+        </main>
+    </div>
+
+    <!-- Modal de Reserva -->
+    <div id="reservaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Hacer Reserva</h2>
+                <button onclick="closeReservaModal()" class="modal-close">&times;</button>
+            </div>
+            <form action="/reservar" method="POST" id="reservaForm">
+                <input type="hidden" name="id_habitacion" id="modal_id_habitacion">
+                
+                <div class="modal-body">
+                    <p id="modal_habitacion_info" class="mb-3"></p>
+                    
+                    <div class="form-group">
+                        <label for="fecha_inicio">Fecha de Entrada</label>
+                        <input type="date" name="fecha_inicio" id="fecha_inicio" required min="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_fin">Fecha de Salida</label>
+                        <input type="date" name="fecha_fin" id="fecha_fin" required min="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Total estimado:</strong> <span id="total_estimado">$0</span>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" onclick="closeReservaModal()" class="btn btn-outline">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let precioNoche = 0;
+
+        function openReservaModal(idHabitacion, tipo, precio) {
+            precioNoche = precio;
+            document.getElementById('modal_id_habitacion').value = idHabitacion;
+            document.getElementById('modal_habitacion_info').textContent = `${tipo} - $${precio.toLocaleString()}/noche`;
+            document.getElementById('reservaModal').style.display = 'flex';
+        }
+
+        function closeReservaModal() {
+            document.getElementById('reservaModal').style.display = 'none';
+            document.getElementById('reservaForm').reset();
+        }
+
+        // Calcular total
+        document.getElementById('fecha_inicio')?.addEventListener('change', calcularTotal);
+        document.getElementById('fecha_fin')?.addEventListener('change', calcularTotal);
+
+        function calcularTotal() {
+            const inicio = new Date(document.getElementById('fecha_inicio').value);
+            const fin = new Date(document.getElementById('fecha_fin').value);
+            
+            if (inicio && fin && fin > inicio) {
+                const dias = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
+                const total = dias * precioNoche;
+                document.getElementById('total_estimado').textContent = `$${total.toLocaleString()} (${dias} ${dias === 1 ? 'noche' : 'noches'})`;
+            } else {
+                document.getElementById('total_estimado').textContent = '$0';
+            }
+        }
+
+        // Filtros
+        function filterRooms() {
+            const tipo = document.getElementById('filter-tipo').value;
+            const precioMax = parseInt(document.getElementById('filter-precio').value);
+            document.getElementById('precio-display').textContent = '$' + precioMax;
+            
+            const rooms = document.querySelectorAll('.room-card');
+            rooms.forEach(room => {
+                const roomTipo = room.dataset.tipo;
+                const roomPrecio = parseInt(room.dataset.precio);
+                
+                const matchTipo = !tipo || roomTipo === tipo;
+                const matchPrecio = roomPrecio <= precioMax;
+                
+                if (matchTipo && matchPrecio) {
+                    room.style.display = 'block';
+                } else {
+                    room.style.display = 'none';
+                }
+            });
+        }
+
+        // Cerrar modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('reservaModal');
+            if (event.target === modal) {
+                closeReservaModal();
+            }
+        }
+    </script>
+</body>
+</html>
