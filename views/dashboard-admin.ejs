@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Panel de Administración - Hotel Flamingo</title>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <h2>⚙️ Panel Admin</h2>
+            <ul class="admin-menu">
+                <li><a href="#" class="admin-menu-link active" data-section="dashboard">📊 Dashboard</a></li>
+                <li><a href="#" class="admin-menu-link" data-section="habitaciones">🛏️ Habitaciones</a></li>
+                <li><a href="#" class="admin-menu-link" data-section="reservas">📅 Reservas</a></li>
+                <li style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+                    <a href="/logout" class="logout-btn">🚪 Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <div class="admin-header">
+                <div>
+                    <h1>Panel de Administración</h1>
+                    <p style="color: var(--muted-text); margin: 5px 0 0 0;">Bienvenido, <%= user.nombre %></p>
+                </div>
+                <div>
+                    <span style="font-weight: 600; color: var(--success);">✓ Administrador</span>
+                </div>
+            </div>
+
+            <!-- DASHBOARD SECTION -->
+            <div id="dashboard-section" class="admin-content active">
+                <h2>Estadísticas Generales</h2>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-label">Total de Usuarios</div>
+                        <div class="stat-value"><%= estadisticas.total_usuarios %></div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon">🛏️</div>
+                        <div class="stat-label">Total de Habitaciones</div>
+                        <div class="stat-value"><%= estadisticas.total_habitaciones %></div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-label">Reservas Activas</div>
+                        <div class="stat-value"><%= estadisticas.reservas_activas || 0 %></div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-label">Ingresos Totales</div>
+                        <div class="stat-value">$<%= (estadisticas.ingresos_totales || 0) %></div>
+                    </div>
+                </div>
+
+                <h2>Últimas Reservas</h2>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Habitación</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% reservas.forEach(reserva => { %>
+                                <tr>
+                                    <td><strong><%= reserva.nombre %></strong></td>
+                                    <td><%= reserva.numero %></td>
+                                    <td><%= new Date(reserva.fecha_inicio).toLocaleDateString('es-ES') %></td>
+                                    <td><%= new Date(reserva.fecha_fin).toLocaleDateString('es-ES') %></td>
+                                    <td>$<%= parseFloat(reserva.total).toFixed(2) %></td>
+                                    <td><span class="status-label"><%= reserva.estado.toUpperCase() %></span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn edit" onclick="editReservation('<%= reserva.id_reserva %>')">Editar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- HABITACIONES SECTION -->
+            <div id="habitaciones-section" class="admin-content">
+                <h2>Gestión de Habitaciones</h2>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="list-habitaciones">📋 Listado</button>
+                    <button class="admin-tab-btn" data-tab="add-habitacion">➕ Agregar</button>
+                    <button class="admin-tab-btn" data-tab="edit-habitacion">✏️ Editar</button>
+                </div>
+
+                <!-- List Tab -->
+                <div id="list-habitaciones-tab" class="admin-tab-content active">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Precio/Noche</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% habitaciones.forEach(hab => { %>
+                                    <tr>
+                                        <td><strong><%= hab.numero %></strong></td>
+                                        <td><%= hab.tipo %></td>
+                                        <td><%= hab.Descripcion || 'Sin descripción' %></td>
+                                        <td>$<%= parseFloat(hab.precio).toFixed(2) %></td>
+                                        <td>
+                                            <span class="status-label status-<%= hab.estado %>">
+                                                <%= hab.estado.charAt(0).toUpperCase() + hab.estado.slice(1) %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="action-btn edit" onclick="editRoom('<%= hab.id_habitacion %>')">Editar</button>
+                                                <button class="action-btn delete" onclick="deleteRoom('<%= hab.id_habitacion %>')">Eliminar</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add Tab -->
+                <div id="add-habitacion-tab" class="admin-tab-content">
+                    <div class="room-form">
+                        <h3>Agregar Nueva Habitación</h3>
+                        <form onsubmit="addRoom(event)">
+                            <div class="form-group">
+                                <label for="numero">Número de Habitación</label>
+                                <input type="text" id="numero" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipo">Tipo</label>
+                                <select id="tipo" required>
+                                    <option>Sencilla</option>
+                                    <option>Doble</option>
+                                    <option>Suite</option>
+                                    <option>Penthouse</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="precio">Precio por Noche</label>
+                                <input type="number" id="precio" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion">Descripción</label>
+                                <textarea id="descripcion"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="estado-add">Estado</label>
+                                <select id="estado-add" required>
+                                    <option>disponible</option>
+                                    <option>ocupada</option>
+                                    <option>mantenimiento</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Agregar Habitación</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Edit Tab -->
+                <div id="edit-habitacion-tab" class="admin-tab-content">
+                    <div class="room-form">
+                        <h3>Editar Habitación</h3>
+                        <form onsubmit="updateRoom(event)" id="editRoomForm">
+                            <input type="hidden" id="room-id">
+                            <div class="form-group">
+                                <label for="edit-numero">Número de Habitación</label>
+                                <input type="text" id="edit-numero" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-tipo">Tipo</label>
+                                <select id="edit-tipo" required>
+                                    <option>Sencilla</option>
+                                    <option>Doble</option>
+                                    <option>Suite</option>
+                                    <option>Penthouse</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-precio">Precio por Noche</label>
+                                <input type="number" id="edit-precio" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-descripcion">Descripción</label>
+                                <textarea id="edit-descripcion"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-estado">Estado</label>
+                                <select id="edit-estado" required>
+                                    <option>disponible</option>
+                                    <option>ocupada</option>
+                                    <option>mantenimiento</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <button type="button" class="btn btn-ghost" onclick="cancelEdit()">Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESERVAS SECTION -->
+            <div id="reservas-section" class="admin-content">
+                <h2>Gestión de Reservas</h2>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Habitación</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Pago</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% reservas.forEach(reserva => { %>
+                                <tr>
+                                    <td><strong><%= reserva.nombre %></strong></td>
+                                    <td><%= reserva.numero %></td>
+                                    <td><%= new Date(reserva.fecha_inicio).toLocaleDateString('es-ES') %></td>
+                                    <td><%= new Date(reserva.fecha_fin).toLocaleDateString('es-ES') %></td>
+                                    <td>$<%= parseFloat(reserva.total).toFixed(2) %></td>
+                                    <td>
+                                        <select onchange="updateReservationStatus('<%= reserva.id_reserva %>', this.value)" class="form-group" style="padding: 4px; border: 1px solid var(--border);">
+                                            <option value="pendiente" <%= reserva.estado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+                                            <option value="confirmada" <%= reserva.estado === 'confirmada' ? 'selected' : '' %>>Confirmada</option>
+                                            <option value="cancelada" <%= reserva.estado === 'cancelada' ? 'selected' : '' %>>Cancelada</option>
+                                            <option value="finalizada" <%= reserva.estado === 'finalizada' ? 'selected' : '' %>>Finalizada</option>
+                                        </select>
+                                    </td>
+                                    <td><%= reserva.estado_pago || 'Pendiente' %></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn edit" onclick="viewReservation('<%= reserva.id_reserva %>')">Ver</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingRoomId = null;
+
+        // Menu navigation
+        document.querySelectorAll('.admin-menu-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                
+                document.querySelectorAll('.admin-content').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.admin-menu-link').forEach(el => el.classList.remove('active'));
+                
+                document.getElementById(section + '-section').classList.add('active');
+                link.classList.add('active');
+            });
+        });
+
+        // Tab navigation in habitaciones
+        document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tab = btn.getAttribute('data-tab');
+                
+                document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+                
+                document.getElementById(tab + '-tab').classList.add('active');
+                btn.classList.add('active');
+            });
+        });
+
+        // Room functions
+        async function addRoom(e) {
+            e.preventDefault();
+            
+            const numero = document.getElementById('numero').value.trim();
+            const tipo = document.getElementById('tipo').value.trim();
+            const precio = document.getElementById('precio').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const estado = document.getElementById('estado-add').value.trim();
+            
+            // Validar campos requeridos
+            if (!numero || !tipo || !precio) {
+                alert('⚠️ Por favor completa los campos: Número, Tipo y Precio');
+                return;
+            }
+            
+            const formData = {
+                numero: numero,
+                tipo: tipo,
+                precio: parseFloat(precio),
+                descripcion: descripcion,
+                estado: estado
+            };
+
+            try {
+                const response = await fetch('/admin/habitaciones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✓ Habitación creada exitosamente');
+                    document.querySelector('#add-habitacion-tab form').reset();
+                    // Cambiar a pestaña de listado
+                    document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+                    document.getElementById('list-habitaciones-tab').classList.add('active');
+                    document.querySelector('[data-tab="list-habitaciones"]').classList.add('active');
+                    // Recargar datos
+                    window.location.reload();
+                } else {
+                    alert('❌ Error: ' + (data.error || 'Error desconocido'));
+                    console.error('Respuesta del servidor:', data);
+                }
+            } catch (error) {
+                console.error('Error detallado:', error);
+                alert('❌ Error al crear la habitación: ' + error.message);
+            }
+        }
+
+        async function deleteRoom(roomId) {
+            if (confirm('¿Está seguro de que desea eliminar esta habitación? Esta acción no se puede deshacer.')) {
+                try {
+                    const response = await fetch(`/admin/habitaciones/${roomId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('✓ Habitación eliminada exitosamente');
+                        window.location.reload();
+                    } else {
+                        alert('❌ Error: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('❌ Error al eliminar la habitación');
+                }
+            }
+        }
+
+        function editRoom(roomId) {
+            // Obtener datos de la habitación
+            const row = event.target.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            // Obtener el estado del span y limpiar
+            const estadoSpan = cells[4].querySelector('.status-label');
+            let estado = estadoSpan ? estadoSpan.textContent.trim().toLowerCase() : cells[4].textContent.trim().toLowerCase();
+            
+            // Limpiar el precio (remover $ y espacios)
+            const precioText = cells[3].textContent.replace(/[$]/g, '').trim();
+            
+            const roomData = {
+                id_habitacion: roomId,
+                numero: cells[0].textContent.trim(),
+                tipo: cells[1].textContent.trim(),
+                descripcion: cells[2].textContent.trim(),
+                precio: precioText,
+                estado: estado
+            };
+
+            // Llenar el formulario de edición
+            document.getElementById('room-id').value = roomData.id_habitacion;
+            document.getElementById('edit-numero').value = roomData.numero;
+            document.getElementById('edit-tipo').value = roomData.tipo;
+            document.getElementById('edit-precio').value = roomData.precio;
+            document.getElementById('edit-descripcion').value = roomData.descripcion;
+            document.getElementById('edit-estado').value = roomData.estado;
+
+            currentEditingRoomId = roomId;
+
+            // Cambiar a la pestaña de edición
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('edit-habitacion-tab').classList.add('active');
+            document.querySelector('[data-tab="edit-habitacion"]').classList.add('active');
+        }
+
+        function cancelEdit() {
+            document.getElementById('editRoomForm').reset();
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('list-habitaciones-tab').classList.add('active');
+            document.querySelector('[data-tab="list-habitaciones"]').classList.add('active');
+        }
+
+        async function updateRoom(e) {
+            e.preventDefault();
+            
+            const roomId = document.getElementById('room-id').value;
+            
+            if (!roomId) {
+                alert('⚠️ Error: No se identificó la habitación a editar');
+                return;
+            }
+            
+            const numero = document.getElementById('edit-numero').value.trim();
+            const tipo = document.getElementById('edit-tipo').value.trim();
+            const precio = document.getElementById('edit-precio').value.trim();
+            const descripcion = document.getElementById('edit-descripcion').value.trim();
+            const estado = document.getElementById('edit-estado').value.trim();
+            
+            // Validar campos requeridos
+            if (!numero || !tipo || !precio) {
+                alert('⚠️ Por favor completa los campos: Número, Tipo y Precio');
+                return;
+            }
+            
+            const formData = {
+                numero: numero,
+                tipo: tipo,
+                precio: parseFloat(precio),
+                descripcion: descripcion,
+                estado: estado
+            };
+
+            try {
+                const response = await fetch(`/admin/habitaciones/${roomId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✓ Habitación actualizada exitosamente');
+                    window.location.reload();
+                } else {
+                    alert('❌ Error: ' + (data.error || 'Error desconocido'));
+                    console.error('Respuesta del servidor:', data);
+                }
+            } catch (error) {
+                console.error('Error detallado:', error);
+                alert('❌ Error al actualizar la habitación: ' + error.message);
+            }
+        }
+
+        async function updateReservationStatus(reservaId, newStatus) {
+            try {
+                const response = await fetch(`/admin/reservas/${reservaId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estado: newStatus })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✓ Estado de la reserva actualizado');
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('❌ Error al actualizar el estado');
+            }
+        }
+
+        function editReservation(reservaId) {
+            alert('Edición de reserva disponible próximamente');
+        }
+
+        function viewReservation(reservaId) {
+            alert('Visualización de reserva disponible próximamente');
+        }
+    </script>
+</body>
+
+</html>

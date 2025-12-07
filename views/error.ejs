@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Error - Hotel Flamingo</title>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-code"><%= codigo %></div>
+            <div class="error-message"><%= message %></div>
+            <div class="error-description">
+                <p>Lo sentimos, algo salió mal. Por favor intenta nuevamente o contacta con el administrador.</p>
+            </div>
+            <div class="error-actions">
+                <a href="/" class="btn-primary">Volver al Inicio</a>
+                <a href="/auth/login" class="btn-secondary">Iniciar Sesión</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

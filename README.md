@@ -1,5 +1,229 @@
 
-# 🏨 Hotel Flamingo - Sistema de Reservas
+# 🏨 Hotel Flamingo - Sistema de Gestión Hotelera
+
+> Sistema completo de reservas y gestión hotelera con autenticación Google OAuth 2.0
+
+## 📊 Características Principales
+
+- ✅ **Autenticación**: Email/Contraseña + Google OAuth 2.0
+- ✅ **Gestión de Habitaciones**: CRUD completo (Admin)
+- ✅ **Sistema de Reservas**: Crear, ver, cancelar (Cliente)
+- ✅ **Servicios Adicionales**: Desayuno, spa, transporte, etc.
+- ✅ **Verificación de Disponibilidad**: En tiempo real
+- ✅ **Panel de Administración**: Estadísticas y gestión
+- ✅ **Pagos**: Estructura lista (integrar Stripe/PayPal)
+- ✅ **Seguridad**: Sesiones seguras, contraseñas hasheadas
+
+---
+
+## 🚀 Inicio Rápido
+
+### 1. Instalación
+
+```bash
+cd d:\Universidad\Hotel
+npm install
+```
+
+### 2. Configuración de Base de Datos
+
+```bash
+# Ejecutar en MySQL:
+# Ver archivo SCHEMA.md para todas las tablas
+mysql -u root -p < SCHEMA.md
+```
+
+### 3. Variables de Entorno
+
+```bash
+# Crear .env (copiar de .env.example)
+cp .env.example .env
+
+# Editar .env con:
+GOOGLE_CLIENT_ID=xxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=xxxxx
+SESSION_SECRET=TuClaveSecreta
+```
+
+### 4. Ejecutar Servidor
+
+```bash
+node app.js
+# http://localhost:3000
+```
+
+---
+
+## 📚 Documentación Completa
+
+| Archivo | Descripción |
+|---------|-------------|
+| **DOCUMENTACION.md** | Documentación técnica completa (arquitectura, BD, rutas, flujos) |
+| **SCHEMA.md** | Esquema SQL con todas las tablas y ejemplos |
+| **GOOGLE_OAUTH_SETUP.md** | Paso a paso para configurar Google OAuth |
+| **IMPLEMENTACION.md** | Resumen de lo implementado |
+
+---
+
+## 🏗️ Estructura de Carpetas
+
+```
+hotel/
+├── app.js                  # Punto de entrada
+├── package.json
+├── .env.example           # Template variables
+├── public/css/styles.css  # Estilos globales
+├── src/
+│   ├── auth.js           # Autenticación
+│   ├── reservas.js       # Rutas de reservas
+│   ├── passport.js       # Google OAuth
+│   └── database.js       # Conexión MySQL
+├── views/
+│   ├── index.ejs         # Landing
+│   ├── login.ejs         # Login
+│   ├── registro.ejs      # Registro
+│   ├── dashboard-cliente.ejs
+│   ├── dashboard-admin.ejs
+│   └── error.ejs
+└── docs/
+    ├── DOCUMENTACION.md
+    ├── SCHEMA.md
+    └── GOOGLE_OAUTH_SETUP.md
+```
+
+---
+
+## 🔑 Rutas Principales
+
+### Públicas
+- `GET /` - Landing page
+- `POST /auth/login` - Login
+- `POST /auth/registro` - Registro
+- `GET /auth/google` - Google OAuth
+
+### Cliente (Protegidas)
+- `GET /dashboard` - Dashboard personalizado
+- `GET /mis-reservas` - Ver mis reservas
+- `POST /crear-reserva` - Crear reserva
+- `PUT /cancelar/:id` - Cancelar reserva
+
+### Admin (Protegidas)
+- `GET /admin/habitaciones` - Listar habitaciones
+- `POST /admin/habitaciones` - Crear habitación
+- `PUT /admin/habitaciones/:id` - Actualizar
+- `DELETE /admin/habitaciones/:id` - Eliminar
+- `GET /admin/reservas` - Ver todas las reservas
+- `PUT /admin/reservas/:id` - Cambiar estado
+
+### APIs Públicas
+- `GET /api/habitaciones/disponibles` - Disponibles
+- `POST /api/check-disponibilidad` - Verificar rango
+- `GET /api/servicios` - Servicios adicionales
+
+---
+
+## 👥 Usuarios de Prueba
+
+### Admin
+- Email: `admin@hotel.com`
+- Password: (Requiere bcrypt hash)
+
+### Cliente (crear desde registro)
+- Email: `usuario@hotel.com`
+- Password: tu_contraseña
+
+---
+
+## 🗄️ Base de Datos
+
+### Tablas Principales
+- `roles` - Admin, Cliente
+- `usuarios` - Registro y autenticación
+- `habitaciones` - Inventario de cuartos
+- `reservas` - Reservaciones
+- `servicios_adicionales` - Extras (desayuno, spa, etc.)
+- `reserva_servicio` - Relación muchos a muchos
+- `pagos` - Registro de pagos
+
+Ver **SCHEMA.md** para detalles completos.
+
+---
+
+## 🔐 Autenticación
+
+### Login Tradicional
+```
+Email + Contraseña → bcrypt compare → Crear sesión
+```
+
+### Google OAuth 2.0
+```
+Clic "Iniciar con Google" → Google auth → Buscar/crear usuario → Sesión
+```
+
+Requiere: `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`  
+Ver: **GOOGLE_OAUTH_SETUP.md**
+
+---
+
+## 📈 Próximas Mejoras
+
+- [ ] Integración de pagos (Stripe/PayPal)
+- [ ] Fotos de habitaciones
+- [ ] Sistema de reviews
+- [ ] Notificaciones por email
+- [ ] Dashboard con gráficos
+- [ ] Exportar reportes (PDF)
+- [ ] App móvil (React Native)
+
+---
+
+## 🐛 Solucionar Problemas
+
+### BD no conecta
+```
+→ Verificar credenciales en src/database.js
+→ Asegurar MySQL está corriendo
+```
+
+### Google OAuth no funciona
+```
+→ Crear .env con GOOGLE_CLIENT_ID y SECRET
+→ Ver GOOGLE_OAUTH_SETUP.md
+```
+
+### Puerto 3000 ocupado
+```bash
+# Cambiar puerto en app.js
+const PORT = 3001; // o el que prefieras
+```
+
+---
+
+## 📞 Stack Técnico
+
+- **Backend**: Node.js + Express 5.1.0
+- **Frontend**: EJS + HTML5 + CSS3
+- **BD**: MySQL 8.x (Clever Cloud)
+- **Autenticación**: bcryptjs + express-session + Passport
+- **APIs**: RESTful con JSON
+
+---
+
+## 📝 License
+
+MIT
+
+---
+
+## 👨‍💻 Autor
+
+**Adrian Acosta**  
+Diciembre 2025
+
+---
+
+**¿Necesitas ayuda?** Ver archivos .md en la documentación o contacta al admin. - Sistema de Reservas
 
 > Sistema profesional de reservas de hotel con panel de administración. Construido con Node.js, Express, MySQL y EJS.
 

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Mi Dashboard - Hotel Flamingo</title>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>🏨 Hotel Flamingo</h2>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="menu-link active" data-tab="reservas">📅 Mis Reservas</a></li>
+                <li><a href="#" class="menu-link" data-tab="habitaciones">🛏️ Reservar Habitación</a></li>
+                <li><a href="#" class="menu-link" data-tab="perfil">👤 Mi Perfil</a></li>
+                <li style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+                    <a href="/logout" style="background: rgba(255,255,255,0.1);">🚪 Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header-top">
+                <div>
+                    <h1>Bienvenido, <%= user.nombre %>!</h1>
+                    <p style="color: var(--muted-text); margin: 0;">Manage your reservations and bookings</p>
+                </div>
+                <div class="user-info">
+                    <p><strong><%= user.email %></strong></p>
+                    <p style="color: var(--success); font-weight: 600;">✓ Cliente Verificado</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="reservas">📅 Mis Reservas</button>
+                <button class="tab-btn" data-tab="habitaciones">🛏️ Reservar Habitación</button>
+                <button class="tab-btn" data-tab="perfil">👤 Mi Perfil</button>
+            </div>
+
+            <!-- Tab: Mis Reservas -->
+            <div id="reservas-content" class="tab-content active">
+                <h2>Mis Reservas</h2>
+                <% if (reservas && reservas.length > 0) { %>
+                    <div class="reservation-table table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Habitación</th>
+                                    <th>Tipo</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% reservas.forEach(reserva => { %>
+                                    <tr>
+                                        <td><strong><%= reserva.numero %></strong></td>
+                                        <td><%= reserva.tipo %></td>
+                                        <td><%= new Date(reserva.fecha_inicio).toLocaleDateString('es-ES') %></td>
+                                        <td><%= new Date(reserva.fecha_fin).toLocaleDateString('es-ES') %></td>
+                                        <td><strong>$<%= parseFloat(reserva.total).toFixed(2) %></strong></td>
+                                        <td>
+                                            <span class="status-badge status-<%= reserva.estado %>">
+                                                <%= reserva.estado.toUpperCase() %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <p style="color: var(--muted-text); font-size: 1.1rem; margin: 0;">
+                            No tienes reservas aún. ¡Reserva una habitación ahora!
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Tab: Reservar Habitación -->
+            <div id="habitaciones-content" class="tab-content">
+                <h2>Habitaciones Disponibles</h2>
+                <% if (habitaciones && habitaciones.length > 0) { %>
+                    <div class="card-grid">
+                        <% habitaciones.forEach(habitacion => { %>
+                            <div class="room-card">
+                                <div class="room-image">🛏️</div>
+                                <div class="room-info">
+                                    <h3><%= habitacion.numero %></h3>
+                                    <div class="room-type"><%= habitacion.tipo %></div>
+                                    <div class="room-features">
+                                        📝 <%= habitacion.descripcion || 'Habitación confortable' %>
+                                    </div>
+                                    <div class="room-price">$<%= parseFloat(habitacion.precio_noche).toFixed(2) %>/noche</div>
+                                    <button class="btn-reserve" onclick="openReservationModal('<%= habitacion.id_habitacion %>')">
+                                        Reservar Ahora
+                                    </button>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <p style="color: var(--muted-text); font-size: 1.1rem; margin: 0;">
+                            No hay habitaciones disponibles en este momento.
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Tab: Perfil -->
+            <div id="perfil-content" class="tab-content">
+                <h2>Mi Perfil</h2>
+                <div class="card" style="max-width: 600px;">
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                        <label class="label">Nombre</label>
+                        <input type="text" class="input" value="<%= user.nombre %>" disabled>
+                    </div>
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                        <label class="label">Email</label>
+                        <input type="email" class="input" value="<%= user.email %>" disabled>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label class="label">Tipo de Cuenta</label>
+                        <input type="text" class="input" value="<%= user.rol === 'admin' ? 'Administrador' : 'Cliente' %>" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Reserva -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeReservationModal()">✕</button>
+            <h2>Nueva Reserva</h2>
+            <form id="reservationForm" onsubmit="submitReservation(event)">
+                <div style="margin-bottom: 15px;">
+                    <label for="checkIn" class="label">Fecha de Check-in</label>
+                    <input type="date" id="checkIn" class="input" required>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="checkOut" class="label">Fecha de Check-out</label>
+                    <input type="date" id="checkOut" class="input" required>
+                </div>
+                <div id="reservationMessage" style="margin-bottom: 15px;"></div>
+                <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentRoomId = null;
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn, .menu-link').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tab = btn.getAttribute('data-tab');
+                
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.querySelectorAll('.tab-btn, .menu-link').forEach(b => b.classList.remove('active'));
+                
+                document.getElementById(tab + '-content').classList.add('active');
+                btn.classList.add('active');
+            });
+        });
+
+        // Reservation modal
+        function openReservationModal(roomId) {
+            currentRoomId = roomId;
+            document.getElementById('reservationModal').classList.add('active');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkIn').min = today;
+        }
+
+        function closeReservationModal() {
+            document.getElementById('reservationModal').classList.remove('active');
+            document.getElementById('reservationForm').reset();
+            document.getElementById('reservationMessage').innerHTML = '';
+        }
+
+        // Update checkout min date
+        document.getElementById('checkIn').addEventListener('change', function() {
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            document.getElementById('checkOut').min = nextDay.toISOString().split('T')[0];
+        });
+
+        async function submitReservation(e) {
+            e.preventDefault();
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const messageDiv = document.getElementById('reservationMessage');
+
+            try {
+                // Check availability
+                const availResponse = await fetch('/api/check-disponibilidad', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_habitacion: currentRoomId,
+                        fecha_inicio: checkIn,
+                        fecha_fin: checkOut
+                    })
+                });
+
+                const availData = await availResponse.json();
+
+                if (!availData.disponible) {
+                    messageDiv.innerHTML = '<div class="error">❌ Esta habitación no está disponible para esas fechas</div>';
+                    return;
+                }
+
+                // Submit reservation
+                const response = await fetch('/reservar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_habitacion: currentRoomId,
+                        fecha_inicio: checkIn,
+                        fecha_fin: checkOut
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.innerHTML = '<div class="success">✓ Reserva creada exitosamente</div>';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = '<div class="error">❌ ' + data.error + '</div>';
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Error al procesar la reserva</div>';
+            }
+        }
+
+        // Set today as min date for check-in
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkIn').min = today;
+    </script>
+</body>
+
+</html>

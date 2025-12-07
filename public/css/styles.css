@@ -1,0 +1,1241 @@
+/* Professional UI inspired by booking.com aesthetics (clean, blue primary)
+   - Modern card forms for login/registro
+   - Clear typographic scale and spacing
+   - Accessible focus states, subtle shadows and rounded elements
+   - Dark mode friendly with bright blue accent
+*/
+
+:root {
+    --bg: #f8f9fa;
+    /* page background - clean light gray */
+    --card: #ffffff;
+    /* surface cards */
+    --muted: #f0f3f7;
+    /* slightly darker background */
+    --primary: #003580;
+    /* deep booking-like blue */
+    --primary-600: #0053a6;
+    /* hover */
+    --primary-light: #0074e4;
+    /* lighter blue accent */
+    --accent: #00a1ff;
+    /* bright accent */
+    --text: #0b2545;
+    /* dark text */
+    --muted-text: #6b7a90;
+    /* secondary text */
+    --success: #1fa67a;
+    --danger: #d14343;
+    --border: #e6ecf4;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --container: 1100px;
+    --shadow-sm: 0 2px 8px rgba(11, 37, 69, 0.08);
+    --shadow-md: 0 4px 16px rgba(11, 37, 69, 0.12);
+    --shadow-lg: 0 8px 24px rgba(11, 37, 69, 0.16);
+}
+
+/* Global reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.45;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: var(--container);
+    margin: 32px auto;
+    padding: 0 20px
+}
+
+/* Header */
+.header-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px
+}
+
+.logo .brand {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.25rem
+}
+
+.nav-actions a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px
+}
+
+.nav-actions a.btn-primary {
+    background: linear-gradient(180deg, var(--primary), var(--primary-600));
+    color: #fff
+}
+
+/* Layout cards */
+.card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    padding: 32px;
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.row {
+    display: flex;
+    gap: 20px
+}
+
+.col {
+    flex: 1
+}
+
+.centered {
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+/* Form styles - professional booking-like */
+.form-wrap {
+    width: 420px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.form-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+}
+
+.form-sub {
+    color: var(--muted-text);
+    font-size: 0.98rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.form {
+    display: grid;
+    gap: 16px;
+}
+
+.form > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label {
+    display: block;
+    font-size: 0.87rem;
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 0.98rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.input::placeholder,
+textarea::placeholder,
+select::placeholder {
+    color: var(--muted-text);
+}
+
+.input:hover,
+textarea:hover,
+select:hover {
+    border-color: var(--primary-light);
+}
+
+.input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 53, 128, 0.1);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.98rem;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-600));
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-600), #003d8f);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 2px solid var(--border);
+    color: var(--primary);
+    transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+    border-color: var(--primary);
+    background: rgba(0, 53, 128, 0.05);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.help {
+    font-size: 0.92rem;
+    color: var(--muted-text)
+}
+
+.error {
+    background: rgba(209, 67, 67, 0.08);
+    color: var(--danger);
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(209, 67, 67, 0.2);
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
+.success,
+.exito {
+    background: rgba(31, 166, 122, 0.08);
+    color: var(--success);
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(31, 166, 122, 0.2);
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
+/* Login & Registro specific */
+.auth-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #eef2f8 100%);
+}
+
+.auth-layout .card {
+    max-width: 450px;
+    width: 100%;
+    background: var(--card);
+}
+
+.auth-card {
+    display: flex;
+    gap: 28px;
+    align-items: stretch;
+}
+
+.auth-left {
+    width: 420px
+}
+
+.auth-right {
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px
+}
+
+.auth-brand {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary)
+}
+
+.auth-hero {
+    color: var(--muted-text);
+    line-height: 1.4
+}
+
+/* Small device adjustments */
+@media (max-width:920px) {
+    .row {
+        flex-direction: column
+    }
+
+    .auth-card {
+        flex-direction: column
+    }
+
+    .auth-left,
+    .auth-right {
+        width: 100%
+    }
+}
+
+/* Table list tweaks keep consistent with new look */
+.table-wrapper {
+    background: transparent;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: auto
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse
+}
+
+.table-wrapper th,
+.table-wrapper td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #f1f4f8;
+    color: var(--muted-text)
+}
+
+.table-wrapper tbody tr {
+    background: transparent
+}
+
+.table-wrapper tbody tr:hover {
+    background: rgba(0, 53, 128, 0.03)
+}
+
+/* Buttons and links */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--primary-600);
+    text-decoration: underline;
+}
+
+.auth-layout a {
+    color: var(--primary);
+}
+
+.auth-layout a:hover {
+    color: var(--primary-600);
+}
+
+/* Footer small */
+.footer {
+    margin-top: 28px;
+    color: var(--muted-text);
+    font-size: 0.9rem;
+}
+
+/* Accessibility focus visible */
+:focus {
+    outline: 2px solid rgba(0, 161, 255, 0.14);
+    outline-offset: 3px;
+}
+
+/* Utility */
+.mt-8 {
+    margin-top: 8px
+}
+
+.mt-16 {
+    margin-top: 16px
+}
+
+.text-center {
+    text-align: center
+}
+
+/* Subtle input icons placeholder (optional) */
+.input-icon {
+    position: relative
+}
+
+.input-icon .icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-text)
+}
+
+.input-icon input {
+    padding-left: 38px
+}
+
+/* Smooth transitions for all interactive elements */
+*:not(.btn)::selection {
+    background: rgba(0, 53, 128, 0.2);
+    color: var(--text);
+}
+
+/* Input placeholder styling */
+input::placeholder {
+    opacity: 0.8;
+}
+
+/* Small text helper */
+small {
+    font-size: 0.875rem;
+    color: var(--muted-text);
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.card {
+    animation: slideUp 0.4s ease-out;
+}
+
+.error,
+.success {
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Form input focus enhancement */
+.input:focus {
+    background: linear-gradient(to bottom, var(--card), rgba(0, 161, 255, 0.02));
+}
+
+/* Help text styling */
+.help {
+    font-size: 0.92rem;
+    color: var(--muted-text);
+    margin: 0;
+    display: block;
+    line-height: 1.5;
+}
+
+/* Responsive improvements */
+@media (max-width: 480px) {
+    .card {
+        padding: 24px;
+    }
+    
+    .form-wrap {
+        width: 100%;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+    
+    .auth-layout {
+        padding: 20px 16px;
+    }
+}
+
+/* ============================================
+   ADMIN DASHBOARD STYLES
+   ============================================ */
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, var(--primary), var(--primary-600));
+    color: white;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-md);
+}
+
+.admin-sidebar h2 {
+    margin: 0 0 30px 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-menu {
+    list-style: none;
+}
+
+.admin-menu li {
+    margin-bottom: 10px;
+}
+
+.admin-menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.admin-menu a:hover,
+.admin-menu a.active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.admin-main {
+    margin-left: 280px;
+    flex: 1;
+    padding: 20px;
+}
+
+.admin-header {
+    background: var(--card);
+    padding: 20px 30px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-header h1 {
+    color: var(--text);
+    margin: 0;
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--primary);
+}
+
+.stat-card.success {
+    border-left-color: var(--success);
+}
+
+.stat-card.warning {
+    border-left-color: #ff9800;
+}
+
+.stat-card.danger {
+    border-left-color: var(--danger);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    color: var(--muted-text);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--border);
+}
+
+.admin-tab-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    color: var(--muted-text);
+    cursor: pointer;
+    font-weight: 700;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.admin-tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.admin-tab-btn:hover {
+    color: var(--primary);
+}
+
+.admin-content {
+    display: none;
+}
+
+.admin-content.active {
+    display: block;
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+}
+
+.table-container {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    background: linear-gradient(180deg, var(--primary), var(--primary-600));
+    color: white;
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+}
+
+.admin-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.admin-table tbody tr:hover {
+    background: var(--muted);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.action-btn.edit {
+    background: #2196f3;
+    color: white;
+}
+
+.action-btn.edit:hover {
+    background: #1976d2;
+}
+
+.action-btn.delete {
+    background: var(--danger);
+    color: white;
+}
+
+.action-btn.delete:hover {
+    background: #c1180b;
+}
+
+.action-btn.confirm {
+    background: var(--success);
+    color: white;
+}
+
+.action-btn.confirm:hover {
+    background: #118a54;
+}
+
+.room-form {
+    background: var(--card);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    max-width: 600px;
+    box-shadow: var(--shadow-sm);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    width: 100%;
+    text-align: left;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.status-label {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-disponible {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--success);
+}
+
+.status-ocupada {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--danger);
+}
+
+.status-mantenimiento {
+    background: rgba(255, 193, 7, 0.2);
+    color: #f57c00;
+}
+
+/* ============================================
+   CLIENT DASHBOARD STYLES
+   ============================================ */
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: var(--primary);
+    color: white;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+}
+
+.sidebar-menu {
+    list-style: none;
+}
+
+.sidebar-menu li {
+    margin-bottom: 15px;
+}
+
+.sidebar-menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    border-radius: var(--radius);
+    transition: background 0.3s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.main-content {
+    margin-left: 250px;
+    flex: 1;
+    padding: 20px;
+}
+
+.header-top {
+    background: var(--card);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-top h1 {
+    color: var(--text);
+    margin: 0;
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-info p {
+    margin: 5px 0;
+    color: var(--muted-text);
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--border);
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--muted-text);
+    cursor: pointer;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.room-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+}
+
+.room-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+}
+
+.room-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.room-info {
+    padding: 20px;
+}
+
+.room-info h3 {
+    margin: 0 0 10px 0;
+    color: var(--text);
+}
+
+.room-type {
+    color: var(--muted-text);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.room-features {
+    font-size: 0.85rem;
+    color: var(--muted-text);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.room-price {
+    font-size: 1.3rem;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.reservation-table {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrapper th {
+    background: var(--primary);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.table-wrapper td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.table-wrapper tbody tr:hover {
+    background: var(--muted);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-pendiente {
+    background: rgba(255, 193, 7, 0.2);
+    color: #f57c00;
+}
+
+.status-confirmada {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--success);
+}
+
+.status-cancelada {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--danger);
+}
+
+.status-finalizada {
+    background: rgba(33, 150, 243, 0.2);
+    color: #1976d2;
+}
+
+.btn-reserve {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.btn-reserve:hover {
+    background: var(--primary-600);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: var(--text);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--muted-text);
+}
+
+/* ============================================
+   ERROR PAGE STYLES
+   ============================================ */
+
+.error-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-600) 100%);
+}
+
+.error-content {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.error-code {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--danger);
+    margin-bottom: 10px;
+}
+
+.error-message {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.error-description {
+    color: var(--muted-text);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.error-actions a {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.error-actions .btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.error-actions .btn-primary:hover {
+    background: var(--primary-600);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.error-actions .btn-secondary {
+    background: var(--muted);
+    color: var(--text);
+    border: 2px solid var(--border);
+}
+
+.error-actions .btn-secondary:hover {
+    background: var(--border);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 0;
+        transform: translateX(-100%);
+    }
+
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .sidebar {
+        width: 0;
+        transform: translateX(-100%);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .admin-stats,
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header,
+    .header-top {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .user-info {
+        text-align: center;
+    }
+}
+
+/* End of stylesheet */
