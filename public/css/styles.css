@@ -262,6 +262,33 @@ textarea {
     transform: translateY(1px);
 }
 
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+}
+
 .help {
     font-size: 0.92rem;
     color: var(--muted-text)

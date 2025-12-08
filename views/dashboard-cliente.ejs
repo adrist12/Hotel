@@ -113,7 +113,7 @@
                                     <div class="room-features">
                                         📝 <%= habitacion.descripcion || 'Habitación confortable' %>
                                     </div>
-                                    <div class="room-price">$<%= parseFloat(habitacion.precio_noche).toFixed(2) %>/noche</div>
+                                    <div class="room-price">$<%= parseFloat(habitacion.precio).toFixed(2) %>/noche</div>
                                     <button class="btn-reserve" onclick="openReservationModal('<%= habitacion.id_habitacion %>')">
                                         Reservar Ahora
                                     </button>
