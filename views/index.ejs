@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title><%= titulo %> - Tu Hotel de Confianza</title>
+</head>
+
+<body>
+    <!-- Header -->
+    <header style="background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 0; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm);">
+        <div class="container">
+            <div class="header-hero">
+                <div class="logo">
+                    <span style="font-size: 1.8rem;">🏨</span>
+                    <span class="brand"><%= titulo %></span>
+                </div>
+                <div class="nav-actions">
+                    <a href="/auth/login" class="btn-primary" style="padding: 10px 20px; border-radius: var(--radius); background: linear-gradient(135deg, var(--primary), var(--primary-600)); color: white; text-decoration: none;">Iniciar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-600) 100%); color: white; padding: 80px 20px; text-align: center;">
+        <div class="container">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -1px;">
+                Bienvenido a <%= titulo %>
+            </h1>
+            <p style="font-size: 1.1rem; margin-bottom: 32px; opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                Experimenta la comodidad y lujo en nuestras habitaciones. Reserva ahora y disfruta de una estadía inolvidable.
+            </p>
+            <a href="/auth/registro" class="btn btn-primary" style="background: white; color: var(--primary); display: inline-block; margin-bottom: 40px;">
+                Crea tu cuenta y reserva ahora
+            </a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 60px 20px;">
+        <section style="margin-bottom: 60px;">
+            <h2 style="font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 40px; text-align: center;">
+                ¿Por qué elegirnos?
+            </h2>
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">⭐</div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--text);">
+                        Excelente Servicio
+                    </h3>
+                    <p style="color: var(--muted-text); line-height: 1.6;">
+                        Nuestro equipo está disponible 24/7 para brindarte la mejor atención y resolver cualquier duda.
+                    </p>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">🏆</div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--text);">
+                        Calidad Premium
+                    </h3>
+                    <p style="color: var(--muted-text); line-height: 1.6;">
+                        Habitaciones cómodas y modernas equipadas con todas las comodidades necesarias para tu descanso.
+                    </p>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">💰</div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--text);">
+                        Mejores Precios
+                    </h3>
+                    <p style="color: var(--muted-text); line-height: 1.6;">
+                        Ofertas competitivas y promociones especiales para nuestros clientes más leales.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section style="background: linear-gradient(135deg, #f0f3f7 0%, #e6ecf4 100%); padding: 40px; border-radius: var(--radius-lg); text-align: center; margin-bottom: 40px;">
+            <h2 style="font-size: 1.75rem; font-weight: 700; color: var(--text); margin-bottom: 16px;">
+                ¿Listo para tu próxima aventura?
+            </h2>
+            <p style="color: var(--muted-text); margin-bottom: 24px; font-size: 1.05rem;">
+                Regístrate hoy y comienza a explorar nuestras ofertas especiales.
+            </p>
+            <a href="/auth/registro" class="btn btn-primary" style="display: inline-block;">
+                Crear Cuenta Ahora
+            </a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--text); color: white; padding: 40px 20px; margin-top: 60px;">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h3 style="margin-bottom: 12px;">🏨 <%= titulo %></h3>
+                    <p style="opacity: 0.8; font-size: 0.95rem;">
+                        Tu hotel de confianza para hospedarte con comodidad y lujo.
+                    </p>
+                </div>
+                <div class="col">
+                    <h4 style="margin-bottom: 12px; font-weight: 700;">Enlaces</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;">
+                            <a href="/auth/login" style="color: white; text-decoration: none; opacity: 0.8;">Iniciar Sesión</a>
+                        </li>
+                        <li style="margin-bottom: 8px;">
+                            <a href="/auth/registro" style="color: white; text-decoration: none; opacity: 0.8;">Registrarse</a>
+                        </li>
+                        <li>
+                            <a href="#" style="color: white; text-decoration: none; opacity: 0.8;">Contacto</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h4 style="margin-bottom: 12px; font-weight: 700;">Información</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px; opacity: 0.8;">📧 info@hotelflamingo.com</li>
+                        <li style="margin-bottom: 8px; opacity: 0.8;">📞 +1 (555) 123-4567</li>
+                        <li style="opacity: 0.8;">📍 123 Calle Principal, Ciudad</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 30px; padding-top: 20px; text-align: center; opacity: 0.8; font-size: 0.9rem;">
+                <p>&copy; 2024 <%= titulo %>. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

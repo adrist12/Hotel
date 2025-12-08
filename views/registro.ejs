@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Crear Cuenta - Hotel Flamingo</title>
+</head>
+
+<body>
+    <section class="auth-layout">
+        <div class="card">
+            <div class="form-wrap">
+                <!-- Logo/Marca -->
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <h1 class="auth-brand" style="margin-bottom: 8px;">🏨 Hotel Flamingo</h1>
+                    <p class="form-sub" style="margin: 0;">Tu hotel de confianza para hospedarte</p>
+                </div>
+
+                <h2 class="form-title">Crear Cuenta</h2>
+                <p class="form-sub">Regístrate para comenzar a hacer reservas</p>
+
+                <form action="/auth/registro" method="POST" class="form">
+                    <div>
+                        <label for="nombre" class="label">👤 Nombre Completo</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            class="input" 
+                            placeholder="Juan Pérez" 
+                            required
+                            autocomplete="name"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="email" class="label">📧 Correo Electrónico</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="input" 
+                            placeholder="tu@email.com" 
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="contrasena" class="label">🔐 Contraseña</label>
+                        <input 
+                            type="password" 
+                            id="contrasena" 
+                            name="contrasena" 
+                            class="input" 
+                            placeholder="Mínimo 6 caracteres" 
+                            required
+                            autocomplete="new-password"
+                        >
+                        <small style="color: var(--muted-text); font-size: 0.85rem; margin-top: 4px;">
+                            Usa una contraseña segura con mayúsculas, números y caracteres especiales
+                        </small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Crear Cuenta</button>
+                    </div>
+                </form>
+
+                <!-- Mensajes de error o éxito -->
+                <% if (typeof error !=='undefined' && error) { %>
+                    <div class="error mt-16">
+                        ⚠️ <%= error %>
+                    </div>
+                <% } %>
+
+                <% if (typeof mensaje !=='undefined' && mensaje) { %>
+                    <div class="success mt-16">
+                        ✓ <%= mensaje %>
+                    </div>
+                <% } %>
+
+                <!-- Link a login -->
+                <div style="text-align: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                    <p class="help" style="margin: 0 0 8px 0;">¿Ya tienes una cuenta?</p>
+                    <a href="/auth/login" style="font-size: 1.05rem;">Inicia sesión aquí</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
