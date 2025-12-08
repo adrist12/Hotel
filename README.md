@@ -262,6 +262,8 @@ http://localhost:3000
 - ✅ Visualizar habitaciones disponibles
 - ✅ Hacer reservas con selección de fechas
 - ✅ Ver historial de reservas
+- ✅ **Cancelar reservas** (si están pendientes)
+- ✅ **Eliminar reservas** del historial (canceladas/finalizadas)
 - ✅ Perfil personal
 - ✅ Cierre de sesión seguro
 

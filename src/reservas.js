@@ -162,6 +162,47 @@ router.put('/cancelar/:id', requireLogin, requireCliente, async (req, res) => {
     }
 });
 
+// DELETE /reservas/:id - Eliminar reserva (solo si está cancelada o finalizada)
+router.delete('/reservas/:id', requireLogin, requireCliente, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validar que la reserva pertenece al usuario
+        const [reservas] = await database.execute(
+            `SELECT * FROM reservas WHERE id_reserva = ? AND id_usuario = ?`,
+            [id, req.session.userId]
+        );
+
+        if (reservas.length === 0) {
+            return res.status(404).json({ error: 'Reserva no encontrada' });
+        }
+
+        // Solo permitir eliminar si está cancelada o finalizada
+        if (!['cancelada', 'finalizada'].includes(reservas[0].estado)) {
+            return res.status(400).json({ error: 'Solo se pueden eliminar reservas canceladas o finalizadas' });
+        }
+
+        // Eliminar registros relacionados primero (si no hay ON DELETE CASCADE en pagos, pero fk tiene cascade en reserva_servicio)
+        // La tabla pagos tiene fk sin cascade explicito en el script, pero asumo que podemos borrar la reserva y si falla ajustaremos. 
+        // Revisando crear-tablas.js: 
+        // FOREIGN KEY (id_reserva) REFERENCES reservas(id_reserva) -> No dice ON DELETE CASCADE en pagos.
+        // Entonces deberia borrar pagos primero si existen.
+        
+        await database.execute('DELETE FROM pagos WHERE id_reserva = ?', [id]);
+
+        await database.execute(
+            `DELETE FROM reservas WHERE id_reserva = ?`,
+            [id]
+        );
+
+        res.json({ success: true, message: 'Reserva eliminada del historial' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar la reserva' });
+    }
+});
+
 // ============================================
 // RUTAS ADMIN - GESTIÓN
 // ============================================
