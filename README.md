@@ -5,7 +5,7 @@
 
 ## 📊 Características Principales
 
-- ✅ **Autenticación**: Email/Contraseña + Google OAuth 2.0
+- ✅ **Autenticación**: Email/Contraseña + Google OAuth 2.0 + GitHub OAuth
 - ✅ **Gestión de Habitaciones**: CRUD completo (Admin)
 - ✅ **Sistema de Reservas**: Crear, ver, cancelar (Cliente)
 - ✅ **Servicios Adicionales**: Desayuno, spa, transporte, etc.
@@ -42,6 +42,8 @@ cp .env.example .env
 # Editar .env con:
 GOOGLE_CLIENT_ID=xxxxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=xxxxx
+GITHUB_CLIENT_ID=xxxxx
+GITHUB_CLIENT_SECRET=xxxxx
 SESSION_SECRET=TuClaveSecreta
 ```
 

@@ -38,7 +38,7 @@ async function inicializarBD() {
             console.log('✅ Tabla roles ya existe\n');
         }
 
-        // 2. Crear tabla usuarios
+        // 2. Crear tabla usuarios (con campos OAuth)
         console.log('👤 Creando tabla usuarios...');
         await connection.query(`
             CREATE TABLE IF NOT EXISTS usuarios (
@@ -47,6 +47,9 @@ async function inicializarBD() {
                 email VARCHAR(120) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 id_rol INT NOT NULL,
+                google_id VARCHAR(100) NULL,
+                microsoft_id VARCHAR(100) NULL,
+                github_id VARCHAR(100) NULL,
                 fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
             )
@@ -180,7 +183,7 @@ async function inicializarBD() {
         console.log('✨ Base de datos inicializada correctamente!\n');
 
         connection.release();
-        await pool.end();
+        // Pool no se cierra aquí
         
     } catch (error) {
         console.error('❌ Error:', error.message);
@@ -226,7 +229,7 @@ async function crearAdmin() {
         console.log(`Contraseña: ${contrasena}\n`);
         
         connection.release();
-        await pool.end();
+        // Pool no se cierra aquí
         
     } catch (error) {
         console.error('❌ Error:', error.message);
@@ -327,7 +330,7 @@ async function insertarDatos() {
         console.log('  Contraseña: Cliente123!\n');
 
         connection.release();
-        await pool.end();
+        // Pool no se cierra aquí
         
     } catch (error) {
         console.error('❌ Error:', error.message);
@@ -374,7 +377,48 @@ async function crearCliente() {
         console.log(`Contraseña: ${contrasena}\n`);
         
         connection.release();
-        await pool.end();
+        // Pool no se cierra aquí
+        
+    } catch (error) {
+        console.error('❌ Error:', error.message);
+        process.exit(1);
+    }
+}
+
+// Función para agregar columnas OAuth a tabla existente
+async function agregarColumnasOAuth() {
+    try {
+        const connection = await pool.getConnection();
+        
+        console.log('🔧 Agregando columnas OAuth a tabla usuarios...\n');
+        
+        // Verificar si las columnas ya existen y agregarlas si no
+        try {
+            await connection.query(`
+                ALTER TABLE usuarios 
+                ADD COLUMN IF NOT EXISTS google_id VARCHAR(100) NULL,
+                ADD COLUMN IF NOT EXISTS microsoft_id VARCHAR(100) NULL,
+                ADD COLUMN IF NOT EXISTS github_id VARCHAR(100) NULL
+            `);
+            console.log('✅ Columnas OAuth agregadas correctamente\n');
+        } catch (alterError) {
+            // Si falla el ALTER, intentar agregar columnas una por una
+            console.log('Intentando agregar columnas individualmente...');
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN microsoft_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN github_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            console.log('✅ Columnas OAuth verificadas\n');
+        }
+        
+        connection.release();
+        // Pool no se cierra aquí
+>>>>>>> 59597ce (feat: Add Google/GitHub OAuth, improve UI and update docs)
         
     } catch (error) {
         console.error('❌ Error:', error.message);
@@ -383,9 +427,61 @@ async function crearCliente() {
 }
 
 
-inicializarBD();
-insertarDatos();
-crearAdmin();
-crearCliente();
+// Función para agregar columnas OAuth a tabla existente
+async function agregarColumnasOAuth() {
+    try {
+        const connection = await pool.getConnection();
+        
+        console.log('🔧 Agregando columnas OAuth a tabla usuarios...\n');
+        
+        // Verificar si las columnas ya existen y agregarlas si no
+        try {
+            await connection.query(`
+                ALTER TABLE usuarios 
+                ADD COLUMN IF NOT EXISTS google_id VARCHAR(100) NULL,
+                ADD COLUMN IF NOT EXISTS microsoft_id VARCHAR(100) NULL,
+                ADD COLUMN IF NOT EXISTS github_id VARCHAR(100) NULL
+            `);
+            console.log('✅ Columnas OAuth agregadas correctamente\n');
+        } catch (alterError) {
+            // Si falla el ALTER, intentar agregar columnas una por una
+            console.log('Intentando agregar columnas individualmente...');
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN microsoft_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN github_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            console.log('✅ Columnas OAuth verificadas\n');
+        }
+        
+        connection.release();
+        // Pool no se cierra aquí
+        
+    } catch (error) {
+        console.error('❌ Error:', error.message);
+        process.exit(1);
+    }
+}
 
 
+async function main() {
+    try {
+        await inicializarBD();
+        await insertarDatos();
+        await crearAdmin();
+        await crearCliente();
+        await agregarColumnasOAuth();
+        console.log('🏁 Todo completado con éxito');
+    } catch (error) {
+        console.error('❌ Error general:', error);
+    } finally {
+        await pool.end();
+        process.exit(0);
+    }
+}
+
+main();

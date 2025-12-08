@@ -1,4 +1,5 @@
 //importar las dependencias, al usar type: "module" se usa import y export
+import 'dotenv/config';  // DEBE ser primero para cargar variables de entorno
 import express from 'express';
 import passport from 'passport';
 // Cargar configuración de Passport (registra la estrategia)
@@ -15,7 +16,7 @@ import { auth } from './src/auth.js';
 import { reservas } from './src/reservas.js';
 import { habitaciones } from './src/habitaciones.js';
 import { database } from './src/database.js';
-import 'dotenv/config';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,6 +69,35 @@ app.get('/auth/google/callback',
     }
 );
 
+// Rutas de autenticación con Microsoft (Outlook)
+app.get('/auth/microsoft', passport.authenticate('microsoft', { prompt: 'select_account' }));
+
+app.get('/auth/microsoft/callback',
+    passport.authenticate('microsoft', { failureRedirect: '/auth/login' }),
+    (req, res) => {
+        req.session.userId = req.user.id_usuario;
+        req.session.nombre = req.user.nombre;
+        req.session.email = req.user.email;
+        req.session.id_rol = req.user.id_rol;
+        req.session.rol_nombre = req.user.id_rol === 1 ? 'admin' : 'cliente';
+        res.redirect('/dashboard');
+    }
+);
+
+// Rutas de autenticación con GitHub
+app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
+
+app.get('/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: '/auth/login' }),
+    (req, res) => {
+        req.session.userId = req.user.id_usuario;
+        req.session.nombre = req.user.nombre;
+        req.session.email = req.user.email;
+        req.session.id_rol = req.user.id_rol;
+        req.session.rol_nombre = req.user.id_rol === 1 ? 'admin' : 'cliente';
+        res.redirect('/dashboard');
+    }
+);
 // Middleware para verificar autenticación
 const requireLogin = (req, res, next) => {
     if (!req.session.userId) {
