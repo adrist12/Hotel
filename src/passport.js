@@ -156,5 +156,4 @@ passport.use(new GitHubStrategy({
         return done(err, null);
     }
 }));
-
 export { passport };

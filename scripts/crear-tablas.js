@@ -418,6 +418,48 @@ async function agregarColumnasOAuth() {
         
         connection.release();
         // Pool no se cierra aquí
+>>>>>>> 59597ce (feat: Add Google/GitHub OAuth, improve UI and update docs)
+        
+    } catch (error) {
+        console.error('❌ Error:', error.message);
+        process.exit(1);
+    }
+}
+
+
+// Función para agregar columnas OAuth a tabla existente
+async function agregarColumnasOAuth() {
+    try {
+        const connection = await pool.getConnection();
+        
+        console.log('🔧 Agregando columnas OAuth a tabla usuarios...\n');
+        
+        // Verificar si las columnas ya existen y agregarlas si no
+        try {
+            await connection.query(`
+                ALTER TABLE usuarios 
+                ADD COLUMN IF NOT EXISTS google_id VARCHAR(100) NULL,
+                ADD COLUMN IF NOT EXISTS microsoft_id VARCHAR(100) NULL,
+                ADD COLUMN IF NOT EXISTS github_id VARCHAR(100) NULL
+            `);
+            console.log('✅ Columnas OAuth agregadas correctamente\n');
+        } catch (alterError) {
+            // Si falla el ALTER, intentar agregar columnas una por una
+            console.log('Intentando agregar columnas individualmente...');
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN microsoft_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            try {
+                await connection.query(`ALTER TABLE usuarios ADD COLUMN github_id VARCHAR(100) NULL`);
+            } catch (e) { /* columna ya existe */ }
+            console.log('✅ Columnas OAuth verificadas\n');
+        }
+        
+        connection.release();
+        // Pool no se cierra aquí
         
     } catch (error) {
         console.error('❌ Error:', error.message);

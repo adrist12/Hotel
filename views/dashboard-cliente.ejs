@@ -58,7 +58,6 @@
                                     <th>Check-out</th>
                                     <th>Total</th>
                                     <th>Estado</th>
-                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,18 +72,6 @@
                                             <span class="status-badge status-<%= reserva.estado %>">
                                                 <%= reserva.estado.toUpperCase() %>
                                             </span>
-                                        </td>
-                                        <td>
-                                            <% const estado = (reserva.estado || '').toLowerCase().trim(); %>
-                                            <% if (['pendiente', 'confirmada'].includes(estado)) { %>
-                                                <button onclick="cancelarReserva(<%= reserva.id_reserva %>)" class="btn btn-sm" style="background-color: var(--warning); color: white; padding: 5px 10px; font-size: 0.8rem;">
-                                                    Cancelar
-                                                </button>
-                                            <% } else if (['cancelada', 'finalizada'].includes(estado)) { %>
-                                                <button onclick="eliminarReserva(<%= reserva.id_reserva %>)" class="btn btn-sm" style="background-color: var(--danger); color: white; padding: 5px 10px; font-size: 0.8rem;">
-                                                    Eliminar
-                                                </button>
-                                            <% } %>
                                         </td>
                                     </tr>
                                 <% }) %>
@@ -114,7 +101,7 @@
                                     <div class="room-features">
                                         📝 <%= habitacion.descripcion || 'Habitación confortable' %>
                                     </div>
-                                    <div class="room-price">$<%= parseFloat(habitacion.precio).toFixed(2) %>/noche</div>
+                                    <div class="room-price">$<%= parseFloat(habitacion.precio_noche).toFixed(2) %>/noche</div>
                                     <button class="btn-reserve" onclick="openReservationModal('<%= habitacion.id_habitacion %>')">
                                         Reservar Ahora
                                     </button>
@@ -261,51 +248,10 @@
             }
         }
 
-        async function cancelarReserva(id) {
-            if (!confirm('¿Estás seguro de que quieres cancelar esta reserva?')) return;
-
-            try {
-                const response = await fetch(`/cancelar/${id}`, {
-                    method: 'PUT'
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('Reserva cancelada exitosamente');
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('Error al cancelar la reserva');
-            }
-        }
-
-        async function eliminarReserva(id) {
-            if (!confirm('¿Estás seguro de que quieres eliminar esta reserva del historial?')) return;
-
-            try {
-                const response = await fetch(`/reservas/${id}`, {
-                    method: 'DELETE'
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('Reserva eliminada del historial');
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('Error al eliminar la reserva');
-            }
-        }
-
         // Set today as min date for check-in
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('checkIn').min = today;
     </script>
 </body>
+
 </html>

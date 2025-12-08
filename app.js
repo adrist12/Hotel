@@ -17,6 +17,7 @@ import { reservas } from './src/reservas.js';
 import { habitaciones } from './src/habitaciones.js';
 import { database } from './src/database.js';
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -97,7 +98,6 @@ app.get('/auth/github/callback',
         res.redirect('/dashboard');
     }
 );
-
 // Middleware para verificar autenticación
 const requireLogin = (req, res, next) => {
     if (!req.session.userId) {
