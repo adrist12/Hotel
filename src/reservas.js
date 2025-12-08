@@ -162,6 +162,46 @@ router.put('/cancelar/:id', requireLogin, requireCliente, async (req, res) => {
     }
 });
 
+// DELETE /reservas/:id - Eliminar reserva del historial
+router.delete('/reservas/:id', requireLogin, requireCliente, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validar que la reserva pertenece al usuario
+        const [reservas] = await database.execute(
+            `SELECT * FROM reservas WHERE id_reserva = ? AND id_usuario = ?`,
+            [id, req.session.userId]
+        );
+
+        if (reservas.length === 0) {
+            return res.status(404).json({ error: 'Reserva no encontrada' });
+        }
+
+        // Solo permitir eliminar si está cancelada o finalizada
+        if (!['cancelada', 'finalizada'].includes(reservas[0].estado)) {
+            return res.status(400).json({ error: 'Solo se pueden eliminar reservas canceladas o finalizadas' });
+        }
+
+        // Eliminar pagos asociados primero (no hay ON DELETE CASCADE)
+        await database.execute(
+            `DELETE FROM pagos WHERE id_reserva = ?`,
+            [id]
+        );
+
+        // Eliminar reserva
+        await database.execute(
+            `DELETE FROM reservas WHERE id_reserva = ?`,
+            [id]
+        );
+
+        res.json({ success: true, message: 'Reserva eliminada' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar' });
+    }
+});
+
 // ============================================
 // RUTAS ADMIN - GESTIÓN
 // ============================================

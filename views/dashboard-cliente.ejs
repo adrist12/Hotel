@@ -58,6 +58,7 @@
                                     <th>Check-out</th>
                                     <th>Total</th>
                                     <th>Estado</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -72,6 +73,17 @@
                                             <span class="status-badge status-<%= reserva.estado %>">
                                                 <%= reserva.estado.toUpperCase() %>
                                             </span>
+                                        </td>
+                                        <td>
+                                            <% if (['pendiente', 'confirmada'].includes((reserva.estado || '').toLowerCase().trim())) { %>
+                                                <button class="btn-sm btn-warning" onclick="cancelarReserva('<%= reserva.id_reserva %>')">
+                                                    Cancelar
+                                                </button>
+                                            <% } else if (['cancelada', 'finalizada'].includes((reserva.estado || '').toLowerCase().trim())) { %>
+                                                <button class="btn-sm btn-danger" onclick="eliminarReserva('<%= reserva.id_reserva %>')">
+                                                    Eliminar
+                                                </button>
+                                            <% } %>
                                         </td>
                                     </tr>
                                 <% }) %>
@@ -251,6 +263,49 @@
         // Set today as min date for check-in
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('checkIn').min = today;
+
+        async function cancelarReserva(id) {
+            if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) return;
+
+            try {
+                const response = await fetch(`/cancelar/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Reserva cancelada correctamente');
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Error al cancelar');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error al cancelar la reserva');
+            }
+        }
+
+        async function eliminarReserva(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta reserva de tu historial?')) return;
+
+            try {
+                const response = await fetch(`/reservas/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Reserva eliminada correctamente');
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Error al eliminar');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error al eliminar la reserva');
+            }
+        }
     </script>
 </body>
 
