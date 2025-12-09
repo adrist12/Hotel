@@ -78,7 +78,7 @@
                         </thead>
                         <tbody>
                             <% reservas.forEach(reserva => { %>
-                                <tr>
+                                <tr data-reserva-id="<%= reserva.id_reserva %>" data-id-habitacion="<%= reserva.id_habitacion %>" data-fecha-inicio="<%= reserva.fecha_inicio %>" data-fecha-fin="<%= reserva.fecha_fin %>">
                                     <td><strong><%= reserva.nombre %></strong></td>
                                     <td><%= reserva.numero %></td>
                                     <td><%= new Date(reserva.fecha_inicio).toLocaleDateString('es-ES') %></td>
@@ -276,6 +276,7 @@
     </div>
 
     <script>
+        const adminHabitaciones = <%- JSON.stringify(habitaciones || []) %>;
         let currentEditingRoomId = null;
 
         // Menu navigation
@@ -502,8 +503,103 @@
             }
         }
 
+        // Edit reservation modal handling
         function editReservation(reservaId) {
-            alert('Edición de reserva disponible próximamente');
+            const row = document.querySelector(`tr[data-reserva-id="${reservaId}"]`);
+            if (!row) return alert('No se encontró la reserva en la tabla');
+
+            const idHab = row.getAttribute('data-id-habitacion');
+            const fechaInicio = row.getAttribute('data-fecha-inicio');
+            const fechaFin = row.getAttribute('data-fecha-fin');
+
+            // Crear/abrir modal dinámico
+            let modal = document.getElementById('editReservationModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'editReservationModal';
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeEditReservationModal()">✕</button>
+                        <h2>Editar Reserva</h2>
+                        <form id="editReservationForm" onsubmit="submitEditReservation(event)">
+                            <input type="hidden" id="edit-res-id">
+                            <div class="form-group">
+                                <label for="edit-res-habitacion">Habitación</label>
+                                <select id="edit-res-habitacion" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-res-inicio">Fecha de Check-in</label>
+                                <input type="date" id="edit-res-inicio" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-res-fin">Fecha de Check-out</label>
+                                <input type="date" id="edit-res-fin" required>
+                            </div>
+                            <div id="edit-res-message" style="margin-top:10px"></div>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <button type="button" class="btn btn-ghost" onclick="closeEditReservationModal()">Cancelar</button>
+                        </form>
+                    </div>`;
+                document.body.appendChild(modal);
+            }
+
+            // Llenar select de habitaciones
+            const select = document.getElementById('edit-res-habitacion');
+            select.innerHTML = '';
+            adminHabitaciones.forEach(h => {
+                const opt = document.createElement('option');
+                opt.value = h.id_habitacion;
+                opt.textContent = `${h.numero} - ${h.tipo} ($${parseFloat(h.precio).toFixed(2)})`;
+                select.appendChild(opt);
+            });
+
+            document.getElementById('edit-res-id').value = reservaId;
+            document.getElementById('edit-res-habitacion').value = idHab;
+
+            // Formato ISO yyyy-mm-dd
+            const inDate = new Date(fechaInicio).toISOString().split('T')[0];
+            const outDate = new Date(fechaFin).toISOString().split('T')[0];
+            document.getElementById('edit-res-inicio').value = inDate;
+            document.getElementById('edit-res-fin').value = outDate;
+
+            // Mostrar modal
+            modal.classList.add('active');
+        }
+
+        function closeEditReservationModal() {
+            const modal = document.getElementById('editReservationModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        async function submitEditReservation(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-res-id').value;
+            const id_habitacion = document.getElementById('edit-res-habitacion').value;
+            const fecha_inicio = document.getElementById('edit-res-inicio').value;
+            const fecha_fin = document.getElementById('edit-res-fin').value;
+            const msg = document.getElementById('edit-res-message');
+
+            try {
+                const resp = await fetch(`/admin/reservas/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_habitacion, fecha_inicio, fecha_fin })
+                });
+
+                const data = await resp.json();
+                if (resp.ok && data.success) {
+                    alert('Reserva actualizada correctamente');
+                    window.location.reload();
+                } else {
+                    msg.innerHTML = `<div class="error">${data.error || 'Error al actualizar'}</div>`;
+                }
+            } catch (error) {
+                console.error(error);
+                msg.innerHTML = `<div class="error">Error al actualizar la reserva</div>`;
+            }
         }
 
         function viewReservation(reservaId) {

@@ -186,7 +186,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
                 `);
 
                 const [reservas] = await database.execute(`
-                    SELECT r.id_reserva, u.nombre, h.numero, r.fecha_inicio, r.fecha_fin, r.estado, r.total
+                    SELECT r.id_reserva, r.id_habitacion, u.nombre, h.numero, r.fecha_inicio, r.fecha_fin, r.estado, r.total
                     FROM reservas r
                     JOIN usuarios u ON r.id_usuario = u.id_usuario
                     JOIN habitaciones h ON r.id_habitacion = h.id_habitacion
@@ -208,7 +208,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
             // Dashboard de cliente
             try {
                 const [reservas] = await database.execute(`
-                    SELECT r.id_reserva, h.numero, h.tipo, r.fecha_inicio, r.fecha_fin, r.estado, r.total
+                    SELECT r.id_reserva, r.id_habitacion, h.numero, h.tipo, r.fecha_inicio, r.fecha_fin, r.estado, r.total
                     FROM reservas r
                     JOIN habitaciones h ON r.id_habitacion = h.id_habitacion
                     WHERE r.id_usuario = ?

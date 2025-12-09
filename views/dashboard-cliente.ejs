@@ -79,6 +79,11 @@
                                                 <button class="btn-sm btn-warning" onclick="cancelarReserva('<%= reserva.id_reserva %>')">
                                                     Cancelar
                                                 </button>
+                                                <% if ((reserva.estado || '').toLowerCase().trim() === 'pendiente') { %>
+                                                    <button class="btn-sm btn-primary" onclick="openEditMyReservation('<%= reserva.id_reserva %>', '<%= reserva.id_habitacion %>', '<%= reserva.fecha_inicio %>', '<%= reserva.fecha_fin %>')">
+                                                        Editar
+                                                    </button>
+                                                <% } %>
                                             <% } else if (['cancelada', 'finalizada'].includes((reserva.estado || '').toLowerCase().trim())) { %>
                                                 <button class="btn-sm btn-danger" onclick="eliminarReserva('<%= reserva.id_reserva %>')">
                                                     Eliminar
@@ -167,6 +172,35 @@
                 </div>
                 <div id="reservationMessage" style="margin-bottom: 15px;"></div>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Reserva (Cliente) -->
+    <div id="editMyReservationModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeEditMyReservation()">✕</button>
+            <h2>Editar Reserva</h2>
+            <form id="editMyReservationForm" onsubmit="submitEditMyReservation(event)">
+                <input type="hidden" id="my-edit-res-id">
+                <div style="margin-bottom: 15px;">
+                    <label for="my-edit-habitacion" class="label">Habitación</label>
+                    <select id="my-edit-habitacion" class="input" required>
+                        <% habitaciones.forEach(h => { %>
+                            <option value="<%= h.id_habitacion %>"><%= h.numero %> - <%= h.tipo %> ($<%= parseFloat(h.precio).toFixed(2) %>)</option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="my-edit-checkIn" class="label">Fecha de Check-in</label>
+                    <input type="date" id="my-edit-checkIn" class="input" required>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="my-edit-checkOut" class="label">Fecha de Check-out</label>
+                    <input type="date" id="my-edit-checkOut" class="input" required>
+                </div>
+                <div id="my-edit-res-message" style="margin-bottom: 15px;"></div>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </form>
         </div>
     </div>
@@ -304,6 +338,46 @@
             } catch (error) {
                 console.error(error);
                 alert('Error al eliminar la reserva');
+            }
+        }
+
+        // Edit my reservation (cliente)
+        function openEditMyReservation(id, id_habitacion, fecha_inicio, fecha_fin) {
+            document.getElementById('my-edit-res-id').value = id;
+            document.getElementById('my-edit-habitacion').value = id_habitacion;
+            document.getElementById('my-edit-checkIn').value = new Date(fecha_inicio).toISOString().split('T')[0];
+            document.getElementById('my-edit-checkOut').value = new Date(fecha_fin).toISOString().split('T')[0];
+            document.getElementById('editMyReservationModal').classList.add('active');
+        }
+
+        function closeEditMyReservation() {
+            document.getElementById('editMyReservationModal').classList.remove('active');
+        }
+
+        async function submitEditMyReservation(e) {
+            e.preventDefault();
+            const id = document.getElementById('my-edit-res-id').value;
+            const id_habitacion = document.getElementById('my-edit-habitacion').value;
+            const fecha_inicio = document.getElementById('my-edit-checkIn').value;
+            const fecha_fin = document.getElementById('my-edit-checkOut').value;
+            const msg = document.getElementById('my-edit-res-message');
+
+            try {
+                const resp = await fetch(`/reservas/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_habitacion, fecha_inicio, fecha_fin })
+                });
+                const data = await resp.json();
+                if (resp.ok && data.success) {
+                    alert('Reserva actualizada correctamente');
+                    window.location.reload();
+                } else {
+                    msg.innerHTML = '<div class="error">' + (data.error || 'Error') + '</div>';
+                }
+            } catch (error) {
+                console.error(error);
+                msg.innerHTML = '<div class="error">Error al actualizar la reserva</div>';
             }
         }
     </script>

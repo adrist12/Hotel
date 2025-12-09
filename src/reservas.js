@@ -129,6 +129,72 @@ router.post('/crear-reserva', requireLogin, requireCliente, async (req, res) => 
     }
 });
 
+// PUT /reservas/:id - Cliente actualiza su reserva (fechas/habitación) mientras esté en estado 'pendiente'
+router.put('/reservas/:id', requireLogin, requireCliente, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { id_habitacion, fecha_inicio, fecha_fin } = req.body;
+
+        // Obtener reserva y validar propiedad
+        const [rows] = await database.execute(
+            `SELECT * FROM reservas WHERE id_reserva = ? AND id_usuario = ?`,
+            [id, req.session.userId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Reserva no encontrada' });
+        }
+
+        const reserva = rows[0];
+
+        // Solo permitir editar si está pendiente
+        if (reserva.estado !== 'pendiente') {
+            return res.status(400).json({ error: 'Solo se pueden editar reservas en estado pendiente' });
+        }
+
+        const newHab = id_habitacion || reserva.id_habitacion;
+        const newInicio = fecha_inicio || reserva.fecha_inicio;
+        const newFin = fecha_fin || reserva.fecha_fin;
+
+        const inicio = new Date(newInicio);
+        const fin = new Date(newFin);
+
+        if (inicio >= fin) {
+            return res.status(400).json({ error: 'Fecha fin debe ser mayor que fecha inicio' });
+        }
+
+        // Verificar disponibilidad de la habitación (ignorando la propia reserva)
+        const [conf] = await database.execute(
+            `SELECT COUNT(*) as count FROM reservas WHERE id_habitacion = ? AND id_reserva != ? AND estado != 'cancelada' AND (
+                (fecha_inicio <= ? AND fecha_fin > ?) OR (fecha_inicio < ? AND fecha_fin >= ?) OR (fecha_inicio >= ? AND fecha_fin <= ?)
+            )`,
+            [newHab, id, newFin, newInicio, newFin, newInicio, newInicio, newFin]
+        );
+
+        if (conf[0].count > 0) {
+            return res.status(400).json({ error: 'La habitación no está disponible en las fechas solicitadas' });
+        }
+
+        // Obtener precio de la habitación
+        const [h] = await database.execute(`SELECT precio FROM habitaciones WHERE id_habitacion = ?`, [newHab]);
+        if (h.length === 0) return res.status(404).json({ error: 'Habitación no encontrada' });
+
+        const noches = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
+        const total = noches * h[0].precio;
+
+        await database.execute(
+            `UPDATE reservas SET id_habitacion = ?, fecha_inicio = ?, fecha_fin = ?, total = ? WHERE id_reserva = ?`,
+            [newHab, newInicio, newFin, total, id]
+        );
+
+        res.json({ success: true, message: 'Reserva actualizada', total });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar reserva' });
+    }
+});
+
 // PUT /reservas/:id/cancelar - Cancelar reserva
 router.put('/cancelar/:id', requireLogin, requireCliente, async (req, res) => {
     try {
@@ -223,23 +289,80 @@ router.get('/admin/reservas', requireLogin, requireAdmin, async (req, res) => {
     }
 });
 
-// PUT /admin/reservas/:id - Actualizar estado
+// PUT /admin/reservas/:id - Actualizar estado o detalles de reserva
 router.put('/admin/reservas/:id', requireLogin, requireAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const { estado } = req.body;
+        const { estado, id_habitacion, fecha_inicio, fecha_fin } = req.body;
 
-        const estados_validos = ['pendiente', 'confirmada', 'cancelada', 'finalizada'];
-        if (!estados_validos.includes(estado)) {
-            return res.status(400).json({ error: 'Estado inválido' });
+        // Si se envía sólo estado, validar y actualizar
+        if (estado && !(Array.isArray(estado) && estado.length === 0)) {
+            const estados_validos = ['pendiente', 'confirmada', 'cancelada', 'finalizada'];
+            if (!estados_validos.includes(estado)) {
+                return res.status(400).json({ error: 'Estado inválido' });
+            }
+
+            await database.execute(
+                `UPDATE reservas SET estado = ? WHERE id_reserva = ?`,
+                [estado, id]
+            );
+
+            return res.json({ success: true, message: 'Estado actualizado' });
         }
 
-        await database.execute(
-            `UPDATE reservas SET estado = ? WHERE id_reserva = ?`,
-            [estado, id]
-        );
+        // Si se envían campos para modificar los detalles de la reserva
+        if (id_habitacion || fecha_inicio || fecha_fin) {
+            // Obtener reserva actual
+            const [rows] = await database.execute(
+                `SELECT * FROM reservas WHERE id_reserva = ?`,
+                [id]
+            );
 
-        res.json({ success: true, message: 'Reserva actualizada' });
+            if (rows.length === 0) {
+                return res.status(404).json({ error: 'Reserva no encontrada' });
+            }
+
+            const reserva = rows[0];
+
+            const newHab = id_habitacion || reserva.id_habitacion;
+            const newInicio = fecha_inicio || reserva.fecha_inicio;
+            const newFin = fecha_fin || reserva.fecha_fin;
+
+            const inicio = new Date(newInicio);
+            const fin = new Date(newFin);
+
+            if (inicio >= fin) {
+                return res.status(400).json({ error: 'Fecha fin debe ser mayor que fecha inicio' });
+            }
+
+            // Verificar disponibilidad de la habitación para las nuevas fechas (ignorando la propia reserva)
+            const [conf] = await database.execute(
+                `SELECT COUNT(*) as count FROM reservas WHERE id_habitacion = ? AND id_reserva != ? AND estado != 'cancelada' AND (
+                    (fecha_inicio <= ? AND fecha_fin > ?) OR (fecha_inicio < ? AND fecha_fin >= ?) OR (fecha_inicio >= ? AND fecha_fin <= ?)
+                )`,
+                [newHab, id, newFin, newInicio, newFin, newInicio, newInicio, newFin]
+            );
+
+            if (conf[0].count > 0) {
+                return res.status(400).json({ error: 'La habitación no está disponible en las fechas solicitadas' });
+            }
+
+            // Obtener precio de la habitación
+            const [h] = await database.execute(`SELECT precio FROM habitaciones WHERE id_habitacion = ?`, [newHab]);
+            if (h.length === 0) return res.status(404).json({ error: 'Habitación no encontrada' });
+
+            const noches = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
+            const total = noches * h[0].precio;
+
+            await database.execute(
+                `UPDATE reservas SET id_habitacion = ?, fecha_inicio = ?, fecha_fin = ?, total = ? WHERE id_reserva = ?`,
+                [newHab, newInicio, newFin, total, id]
+            );
+
+            return res.json({ success: true, message: 'Reserva actualizada', total });
+        }
+
+        return res.status(400).json({ error: 'No hay datos para actualizar' });
 
     } catch (error) {
         console.error(error);
@@ -263,16 +386,16 @@ router.get('/admin/habitaciones', requireLogin, requireAdmin, async (req, res) =
 // POST /admin/habitaciones - Crear habitación
 router.post('/admin/habitaciones', requireLogin, requireAdmin, async (req, res) => {
     try {
-        const { numero, tipo, precio, capacidad, descripcion, estado } = req.body;
+        const { numero, tipo, precio, descripcion, estado } = req.body;
 
         if (!numero || !tipo || !precio) {
             return res.status(400).json({ error: 'Campos requeridos' });
         }
 
         const [result] = await database.execute(
-            `INSERT INTO habitaciones (numero, tipo, precio, capacidad, descripcion, estado)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [numero, tipo, precio, capacidad || 2, descripcion || '', estado || 'disponible']
+            `INSERT INTO habitaciones (numero, tipo, precio, Descripcion, estado)
+             VALUES (?, ?, ?, ?, ?)`,
+            [numero, tipo, precio, descripcion || '', estado || 'disponible']
         );
 
         res.json({ success: true, id_habitacion: result.insertId });
@@ -290,12 +413,12 @@ router.post('/admin/habitaciones', requireLogin, requireAdmin, async (req, res) 
 router.put('/admin/habitaciones/:id', requireLogin, requireAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const { numero, tipo, precio, capacidad, descripcion, estado } = req.body;
+        const { numero, tipo, precio, descripcion, estado } = req.body;
 
         await database.execute(
-            `UPDATE habitaciones SET numero=?, tipo=?, precio=?, capacidad=?, descripcion=?, estado=?
+            `UPDATE habitaciones SET numero=?, tipo=?, precio=?, Descripcion=?, estado=?
              WHERE id_habitacion = ?`,
-            [numero, tipo, precio, capacidad, descripcion, estado, id]
+            [numero, tipo, precio, descripcion, estado, id]
         );
 
         res.json({ success: true });
