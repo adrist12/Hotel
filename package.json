@@ -12,7 +12,7 @@
     "reservas",
     "hotel"
   ],
-  "author": "Adrian Acosta",
+  "author": "Adrian Acosta, Ronald Villamil",
   "license": "ISC",
   "type": "module",
   "dependencies": {
