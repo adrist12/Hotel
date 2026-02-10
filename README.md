@@ -551,9 +551,8 @@ Este proyecto está bajo licencia MIT. Ver archivo [LICENSE](LICENSE) para más 
 ## 👨‍💻 Autor
 
 **Adrian Acosta**
-- GitHub: [@AdrianAcosta](https://github.com)
-- Email: adrian@example.com
-
+- GitHub: [@AdrianAcosta](https://github.com/adrist12)
+- Email: gilbert.acosta1001@gmail.com
 ---
 
 ## 🙏 Agradecimientos
